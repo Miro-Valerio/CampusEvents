@@ -153,9 +153,11 @@ function App() {
       await loadMyRsvps();
     } catch (err) {
       setError(
-        err.response?.data?.message ||
-          Object.values(err.response?.data?.errors || {}).flat()[0] ||
-          "Account request failed. Please check your details and retry.",
+        Object.values(err.response?.data?.errors || {}).flat()[0] ||
+          err.response?.data?.message ||
+          (!err.response
+            ? "Can't reach the CampusEvents API. Start the Laravel server at http://127.0.0.1:8000 and try again."
+            : "Account request failed. Please check your details and retry."),
       );
     }
   };
@@ -351,7 +353,7 @@ function App() {
             </button>
           </div>
         )}
-        {error && (
+        {error && !authOpen && (
           <div className="error-banner" role="alert">
             <span>{error}</span>
             <button
@@ -448,6 +450,7 @@ function App() {
         <AuthModal
           mode={authMode}
           form={authForm}
+          error={error}
           onFormChange={(field, value) =>
             setAuthForm((current) => ({ ...current, [field]: value }))
           }

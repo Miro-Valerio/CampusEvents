@@ -42,4 +42,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rsvp::class);
     }
+
+    public function organizations(): HasMany
+    {
+        return $this->hasMany(Organizer::class);
+    }
+
+    public function isOfficer(): bool
+    {
+        return $this->role === 'officer';
+    }
 }

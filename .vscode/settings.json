@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Push-Location Backend; & \"C:\\\\laragon\\\\bin\\\\php\\\\php-8\\.4\\.26-Win32-vs17-x64\\\\php\\.exe\" -d extension=\"C:\\\\laragon\\\\bin\\\\php\\\\php-8\\.4\\.26-Win32-vs17-x64\\\\ext\\\\php_pdo_sqlite\\.dll\" -d extension=\"C:\\\\laragon\\\\bin\\\\php\\\\php-8\\.4\\.26-Win32-vs17-x64\\\\ext\\\\php_sqlite3\\.dll\" vendor\\\\bin\\\\phpunit tests\\\\Feature\\\\EventManagementTest\\.php tests\\\\Feature\\\\CampusEventsApiTest\\.php; Pop-Location$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

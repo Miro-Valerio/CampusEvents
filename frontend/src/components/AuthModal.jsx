@@ -4,6 +4,7 @@ import { CalendarDays, X } from "lucide-react";
 export default function AuthModal({
   mode,
   form,
+  error,
   onFormChange,
   onModeChange,
   onSubmit,
@@ -76,6 +77,11 @@ export default function AuthModal({
                 placeholder="Repeat password"
               />
             </label>
+          )}
+          {error && (
+            <div className="auth-error" role="alert">
+              {error}
+            </div>
           )}
           <button className="btn btn-primary full-btn" type="submit">
             {mode === "login" ? "Log in" : "Create account"}

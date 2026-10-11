@@ -90,7 +90,7 @@ export default function EventDiscoveryView({
           >
             <option value="soonest">Soonest</option>
             <option value="newest">Newest</option>
-            <option value="popular">Most popular</option>
+            <option value="popular" disabled>Most popular</option>
           </select>
         </label>
         <button className="reset-btn" onClick={onResetFilters}>

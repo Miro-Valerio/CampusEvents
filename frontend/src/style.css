@@ -974,6 +974,16 @@ img {
   gap: 14px;
 }
 
+.auth-error {
+  padding: 12px 14px;
+  border: 1px solid #f5d4ca;
+  border-radius: 8px;
+  background: #fff2ef;
+  color: #9b3a28;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .auth-modal label {
   display: grid;
   gap: 8px;

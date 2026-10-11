@@ -15,9 +15,15 @@ class EventController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Event::with('organizer')
-            ->withCount(['rsvps as active_rsvps_count' => fn (Builder $query) => $query->where('status', Rsvp::STATUS_GOING)])
-            ->where('starts_at', '>=', now()->startOfDay());
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:120'],
+            'date' => ['nullable', 'date'],
+            'category' => ['nullable', 'string', 'max:80'],
+            'organizer_id' => ['nullable', 'integer', 'exists:organizers,id'],
+            'sort' => ['nullable', 'in:soonest,newest'],
+        ]);
+
+        $query = Event::query()->publishedUpcoming()->with('organizer')->withActiveRsvpCount();
         if ($search = trim((string) $request->query('search', ''))) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -25,19 +31,18 @@ class EventController extends Controller
                     ->orWhereHas('organizer', fn ($o) => $o->where('name', 'like', "%{$search}%"));
             });
         }
-        if ($request->filled('date')) {
-            $query->whereDate('starts_at', $request->query('date'));
+        if (! empty($filters['date'])) {
+            $query->whereDate('starts_at', $filters['date']);
         }
-        if ($request->filled('category')) {
-            $query->where('category', $request->query('category'));
+        if (! empty($filters['category'])) {
+            $query->where('category', $filters['category']);
         }
-        if ($request->filled('organizer_id')) {
-            $query->where('organizer_id', $request->integer('organizer_id'));
+        if (! empty($filters['organizer_id'])) {
+            $query->where('organizer_id', $filters['organizer_id']);
         }
 
-        match ($request->query('sort', 'soonest')) {
+        match ($filters['sort'] ?? 'soonest') {
             'newest' => $query->orderByDesc('created_at'),
-            'popular' => $query->orderByRaw('(baseline_registered_count + active_rsvps_count) DESC'),
             default => $query->orderBy('starts_at'),
         };
 
@@ -46,6 +51,8 @@ class EventController extends Controller
 
     public function show(Event $event): JsonResponse
     {
+        abort_unless($event->status === Event::STATUS_PUBLISHED && $event->starts_at >= now()->startOfDay(), 404);
+
         return response()->json($event
             ->load('organizer')
             ->loadCount(['rsvps as active_rsvps_count' => fn (Builder $query) => $query->where('status', Rsvp::STATUS_GOING)]));
